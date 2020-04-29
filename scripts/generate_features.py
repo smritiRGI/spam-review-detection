@@ -11,19 +11,19 @@ class FeatureGenerate:
 	def __init__(self):
 		self.reviews = self.read_data()
 		start = time.time()
-		self.ratio_of_first_review()
-		"""self.cosine_similar()
+		self.cosine_similar()
 		self.review_length()
 		self.maximum_number_of_reviews_ratio() 
 		self.activity_window()
 		self.review_count()
 		self.positive_review_rating_ratio()
 		self.negative_review_rating_ratio()
+		self.ratio_of_first_review()
 		self.single_product_reviews()
 		self.rating_deviation()
 		self.extreme_rating()
 		self.ratio_of_capital_letters()
-		self.save_data()"""
+		self.save_data()
 
 
 
@@ -181,21 +181,22 @@ class FeatureGenerate:
 		print('executed negative review rating ratio')
 		
 	def ratio_of_first_review(self):
-		first_reviews = self.reviews.groupby(['asin','unixReviewTime'])['reviewerID'].agg(['min'])
-		g = first_reviews['min'].groupby(level=0).head(1)
-		
-		"""first_reviews = self.reviews.groupby('asin')['reviewerID'].agg(['min']).reset_index()
-		print(first_reviews[2459:])
-		first_reviews = self.reviews.groupby('asin')['unixReviewTime','reviewerID'].agg(['min']).reset_index()
-		print(first_reviews)
+		g = self.reviews.groupby(['asin','unixReviewTime'])['reviewerID'].agg(['min'])
+		g = g['min'].groupby(level=0).head(1).reset_index()
+		FirstReviewCount= g.groupby('min')['asin'].agg(['count']).reset_index()
+		FirstReviewCount = FirstReviewCount.rename(columns={'min':'ReviewerId'})
 		total_reviews_by_reviewer = self.reviews.groupby('reviewerID')['overall'].agg(['count']).reset_index()
 		ratio_of_first_review = []
 		for reviewerID in self.reviews['reviewerID']:
-			first_review_rating = first_reviews[first_reviews['reviewerID']==reviewerID]['min'].item()
-			total_review_count = total_reviews_by_reviewer[total_reviews_by_reviewer['reviewerID']==reviewerID]['count'].item()
-			ratio_of_first_review.append(first_review_rating/total_review_count)
+			first_review_count = FirstReviewCount[FirstReviewCount['ReviewerId']==reviewerID]['count'].values
+			total_review_count = total_reviews_by_reviewer[total_reviews_by_reviewer['reviewerID']==reviewerID]['count']
+			if len(first_review_count) == 0:
+				ratio_of_first_review.append(0)
+			else:
+				ratio_of_first_review.append(first_review_count[0]/total_review_count)
+			# print(ratio_of_first_review)
 		self.reviews['ratioFirstReview'] = ratio_of_first_review
-		print('executed ratio of first reviews')"""
+		print('executed ratio of first reviews')
 
 	def single_product_reviews(self):
 		single_review = self.reviews.groupby('reviewerID')['asin'].agg(['count']).reset_index()
