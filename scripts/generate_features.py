@@ -31,9 +31,7 @@ class FeatureGenerate:
 		# time returns the current time in seconds since the Epoch. (January 1st, 1970)
 		start = time.time()
 		return pd.read_csv('../Data/reviews.csv')
-		end = time.time()
-		print("Total time for reading data " + "=" + str(end-start))
-		print('executed')
+		
 
 	def save_data(self):
 		self.reviews.to_csv('../Data/features.csv')
@@ -73,9 +71,12 @@ class FeatureGenerate:
 			for i in range(len(reviews['reviewText'])):
 				cosine_dictionary[str(reviews['reviewText'][i])] = cosine_distance_sorted[i,-2:-1][0]
 				print(cosine_dictionary[str(reviews['reviewText'][i])])
-				# print(cosine_dictionary)
-		self.reviews['cosineSimilarity']  = cosine_dictionary[str(reviews['reviewText'])]
+				# print(cosine_dictionary
+		cos_similar = []
+		for index,row in self.reviews.iterrows():
+			cos_similar.append(cosine_dictionary[str(row['reviewText'])])
 		# print(self.reviews['cosineSimilarity'])
+		self.reviews['cosineSimilarity'] = cos_similar
 		print('executed cosine_similar')
 
 	def mark_spam_reviewlength(self,x):
