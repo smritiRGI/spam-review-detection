@@ -12,7 +12,7 @@ class CleanBehaviouralFeatures:
 		# check the columns
 		print(self.features.columns)
 		# drop irrelavant columns
-		self.features = self.features.drop(columns=['Unnamed: 0', 'Unnamed: 0.1', 'Unnamed: 0.1.1','helpful','overall', 'summary','unixReviewTime','reviewText'])
+		self.features = self.features.drop(columns=['Unnamed: 0', 'Unnamed: 0.1', 'Unnamed: 0.1.1','helpful','overall', 'summary','unixReviewTime'])
 		# normalize by calculating z-score
 		for column in self.features.columns:
 			if self.features[column].dtype == 'float' or self.features[column].dtype == 'int':

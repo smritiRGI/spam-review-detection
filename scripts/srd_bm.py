@@ -28,6 +28,22 @@ class BehaviouralSpamDetection:
 			score = np.abs(drop_score-average_score)
 			weights = [2 if s >= 0.05 else 1 for s in score ]
 			weights_for_all_features.append(weights)
+		weights_for_all_features = np.array(weights_for_all_features)
+		# a row wil have weights for all features  
+		weights_for_all_features = weights_for_all_features.T
+		features = self.features[['cosineSimilarity',
+       'reviewLength', 'maximumReviewsCountRatio', 'activeDays', 'reviewCount',
+       'positiveRatingRatio', 'negativeRatingRatio', 'ratioFirstReview',
+       'singleReviews', 'ratingDeviation', 'extremeRating',
+       'ratioCapitalLetters']]
+		score = np.sum(weights_for_all_features * features,axis=1)
+		total_weight = np.sum(weights_for_all_features,axis=1)
+		spam_score = score/total_weight
+		# let us say threshold is 0.6
+		self.features['label'] = ['Spam' if score > 0.6 else 'Not Spam' for score in spam_score]
+		# print(self.features[self.features['label'] == 'Spam']['reviewText'])
+
+
 		
 
 
