@@ -1,23 +1,40 @@
 import pandas as pd 
+import numpy as np 
 
 
-class SpamDetectionBehaviouralFeatures:
-	
-	def read_data(self):
-		self.features = pd.read_csv('../Data/features.csv')
+class BehaviouralSpamDetection:
 
-	def pre_process(self):
-		# check the columns
+	def read_features(self):
+		self.features = pd.read_csv('../Data/normalized_features.csv')
 		print(self.features.columns)
-		# drop irrelavant columns
-		self.features = self.features.drop(columns=['Unnamed: 0', 'Unnamed: 0.1', 'Unnamed: 0.1.1','helpful','overall', 'summary','unixReviewTime'])
+		print(self.features.head())
+
+
+	def spam_detection(self):
 		
-	def spam_detection(Self):
-			sum = np.sum(self.features,axis=1)
+		sum_of_all_features = np.sum(self.features,axis = 1)
+		# print(sum_of_all_features)
+		columns = ['cosineSimilarity',
+       'reviewLength', 'maximumReviewsCountRatio', 'activeDays', 'reviewCount',
+       'positiveRatingRatio', 'negativeRatingRatio', 'ratioFirstReview',
+       'singleReviews', 'ratingDeviation', 'extremeRating',
+       'ratioCapitalLetters']
+        # number of features are taken to be 12
+		average_score = sum_of_all_features / 12
+		# print(average_score)
+		weights_for_all_features = []
+		for column in columns:
+			drop_score = (sum_of_all_features - self.features[column])/12
+			score = np.abs(drop_score-average_score)
+			weights = [2 if s >= 0.05 else 1 for s in score ]
+			weights_for_all_features.append(weights)
 		
 
 
 
-Detector = SpamDetectionBehaviouralFeatures()
-Detector.read_data()
-Detector.pre_process()
+		
+
+
+Detector = BehaviouralSpamDetection()
+Detector.read_features()
+Detector.spam_detection()
