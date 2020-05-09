@@ -1,13 +1,14 @@
 import pandas as pd 
 import numpy as np 
+import time 
 
 
 class BehaviouralSpamDetection:
 
 	def read_features(self):
+		self.start = time.time()
 		self.features = pd.read_csv('../Data/normalized_features.csv')
-		print(self.features.columns)
-		print(self.features.head())
+		
 
 
 	def spam_detection(self):
@@ -43,7 +44,11 @@ class BehaviouralSpamDetection:
 		self.features['label'] = ['Spam' if score > 0.6 else 'Not Spam' for score in spam_score]
 		# print(self.features[self.features['label'] == 'Spam']['reviewText'])
 
+	def save_data(self):
 
+		self.features.to_csv('../Data/labeled.csv')
+		self.end = time.time()
+		print('Time taken to run the algorithm: ' + str(self.end-self.start))
 		
 
 
@@ -54,3 +59,4 @@ class BehaviouralSpamDetection:
 Detector = BehaviouralSpamDetection()
 Detector.read_features()
 Detector.spam_detection()
+Detector.save_data()
